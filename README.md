@@ -1,5 +1,7 @@
 # csp-parse
 
+[![Build Status](https://travis-ci.org/templarbit/csp-parse.svg?branch=master)](https://travis-ci.org/templarbit/csp-parse)
+
 Content-Security-Policy parser in compliance with the W3C 
 [CSP Level 2](https://www.w3.org/TR/CSP2/) 
 and [CSP Level 3](https://www.w3.org/TR/CSP3/) specs.
