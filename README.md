@@ -1,6 +1,7 @@
 # csp-parse
 
 [![Build Status](https://travis-ci.org/templarbit/csp-parse.svg?branch=master)](https://travis-ci.org/templarbit/csp-parse)
+[![GoDoc](https://godoc.org/github.com/templarbit/csp-parse?status.svg)](https://godoc.org/github.com/templarbit/csp-parse)
 
 Content-Security-Policy parser in compliance with the W3C 
 [CSP Level 2](https://www.w3.org/TR/CSP2/) 
