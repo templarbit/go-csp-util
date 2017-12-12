@@ -12,7 +12,7 @@ func TestParse(t *testing.T) {
 	}{
 		// test some basic stuff
 		{
-			in: "default-src 'self'; script-src 'self'; object-src 'self'; base-uri 'none'; report-uri https://logs.templarbit.com/csp/foobar/reports;",
+			in: "default-src 'self'; script-src 'self'; connect-src ; object-src 'self';base-uri 'none';report-uri https://logs.templarbit.com/csp/foobar/reports;",
 			expectDirectives: []Directive{
 				{
 					Name:  "default-src",
@@ -21,6 +21,10 @@ func TestParse(t *testing.T) {
 				{
 					Name:  "script-src",
 					Value: []string{"'self'"},
+				},
+				{
+					Name:  "connect-src",
+					Value: []string{},
 				},
 				{
 					Name:  "object-src",
@@ -80,12 +84,12 @@ func TestParse(t *testing.T) {
 			}
 
 			if len(out[j].Value) != len(tt.expectDirectives[j].Value) {
-				t.Fatalf("expect len(%v), got len(%v), in %v", len(tt.expectDirectives[j].Value), len(out[j].Value))
+				t.Fatalf("expect len(%v), got len(%v), in %v", len(tt.expectDirectives[j].Value), len(out[j].Value), i)
 			}
 
 			for k := 0; k < len(out[j].Value); k++ {
 				if out[j].Value[k] != tt.expectDirectives[j].Value[k] {
-					t.Errorf("expect %v, got %v, in %v", tt.expectDirectives[j].Value[k], out[j].Value[k])
+					t.Errorf("expect %v, got %v, in %v", tt.expectDirectives[j].Value[k], out[j].Value[k], i)
 				}
 			}
 		}
