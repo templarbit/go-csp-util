@@ -30,7 +30,7 @@ go get github.com/templarbit/csp-parse
 ```go
 import "github.com/templarbit/csp-parse"
 
-directives, err := csp.Parse("default-src 'self'; script-src 'self'; object-src 'self'; base-uri 'none'; report-uri https://logs.templarbit.com/csp/xxkey/reports")
+directives, err := csp.ParseDirectives("default-src 'self'; script-src 'self'; object-src 'self'; base-uri 'none'; report-uri https://logs.templarbit.com/csp/xxkey/reports")
 ```
 
 
