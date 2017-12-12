@@ -44,6 +44,11 @@ func TestParse(t *testing.T) {
 			expectDirectives: nil,
 			expectErr:        ErrDuplicateDirective,
 		},
+		{
+			in:               "object-src 'self'; Object-src 'none'",
+			expectDirectives: nil,
+			expectErr:        ErrDuplicateDirective,
+		},
 
 		// test unknown directive name
 		{
