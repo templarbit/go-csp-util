@@ -8,6 +8,9 @@ import (
 const (
 	DispositionEnforce = "enforce"
 	DispositionReport  = "report"
+
+	ContentSecurityPolicy           = "Content-Security-Policy"
+	ContentSecurityPolicyReportOnly = "Content-Security-Policy-Report-Only"
 )
 
 type Policy struct {
