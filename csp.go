@@ -1,6 +1,7 @@
 package csp
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -45,6 +46,50 @@ func Parse(serializedPolicy string) ([]Directive, error) {
 		}
 		name := x[0]
 
+		// Verify name
+		switch strings.ToLower(name) {
+		case "child-src":
+		case "connect-src":
+		case "default-src":
+		case "font-src":
+		case "frame-src":
+		case "img-src":
+		case "manifest-src":
+		case "media-src":
+		case "object-src":
+		case "script-src":
+		case "style-src":
+		case "worker-src":
+		case "base-uri":
+		case "plugin-types":
+		case "sandbox":
+		case "disown-opener":
+		case "form-action":
+		case "frame-ancestors":
+		case "report-uri":
+		case "report-to":
+			// ok
+
+		default:
+			return nil, &ParseError{
+				Err:    ErrDirectiveNameUnknown,
+				Custom: fmt.Sprintf("directive name '%v' is unknown", name),
+			}
+		}
+
+		// If the set of directives already contains a directive
+		// whose name is a case insensitive match for directive name,
+		// ignore this instance of the directive and continue to the next token.
+		// The user agent SHOULD notify developers that a directive was ignored.
+		for _, dx := range d {
+			if strings.ToLower(dx.Name) == strings.ToLower(name) {
+				return nil, &ParseError{
+					Err:    ErrDuplicateDirective,
+					Custom: fmt.Sprintf("directive '%v' is a duplicate", name),
+				}
+			}
+		}
+
 		// The value is a set of non-empty strings. The value set MAY be empty.
 		values := make([]string, 0)
 		if len(x) > 1 {
@@ -59,4 +104,18 @@ func Parse(serializedPolicy string) ([]Directive, error) {
 	}
 
 	return d, nil
+}
+
+var (
+	ErrDuplicateDirective   = fmt.Errorf("duplicate directive")
+	ErrDirectiveNameUnknown = fmt.Errorf("unknown directive name")
+)
+
+type ParseError struct {
+	Err    error
+	Custom string
+}
+
+func (e *ParseError) Error() string {
+	return fmt.Sprintf("%v: %v", e.Err.Error(), e.Custom)
 }

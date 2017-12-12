@@ -10,6 +10,7 @@ func TestParse(t *testing.T) {
 		expectDirectives []Directive
 		expectErr        error
 	}{
+		// test some basic stuff
 		{
 			in: "default-src 'self'; script-src 'self'; object-src 'self'; base-uri 'none'; report-uri https://logs.templarbit.com/csp/foobar/reports;",
 			expectDirectives: []Directive{
@@ -36,12 +37,32 @@ func TestParse(t *testing.T) {
 			},
 			expectErr: nil,
 		},
+
+		// test duplicate directive
+		{
+			in:               "object-src 'self'; object-src 'none'",
+			expectDirectives: nil,
+			expectErr:        ErrDuplicateDirective,
+		},
+
+		// test unknown directive name
+		{
+			in:               "bogus 'self'",
+			expectDirectives: nil,
+			expectErr:        ErrDirectiveNameUnknown,
+		},
 	}
 
 	for i, tt := range tests {
 		out, err := Parse(tt.in)
 		if err != tt.expectErr {
-			t.Fatalf("expect %v, got %v, in %v", tt.expectErr, err, i)
+			if xerr, ok := err.(*ParseError); ok {
+				if xerr.Err != tt.expectErr {
+					t.Fatalf("expect %v, got %v, in %v", tt.expectErr, xerr, i)
+				}
+			} else {
+				t.Fatalf("expect %v, got %v, in %v", tt.expectErr, err, i)
+			}
 		}
 
 		if len(out) != len(tt.expectDirectives) {
