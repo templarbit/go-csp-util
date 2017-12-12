@@ -48,7 +48,7 @@ func ParseDirectives(serializedPolicy string) (Directives, error) {
 		x := strings.SplitN(t, " ", 2)
 
 		// The name is a non-empty string
-		if len(x) < 0 || len(x[0]) == 0 {
+		if len(x) == 0 || len(x[0]) == 0 {
 			continue
 		}
 		name := x[0]
