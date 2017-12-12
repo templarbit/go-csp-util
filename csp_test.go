@@ -12,7 +12,7 @@ func TestParse(t *testing.T) {
 	}{
 		// test some basic stuff
 		{
-			in: "default-src 'self'; script-src 'self'; connect-src ; object-src 'self';base-uri 'none';report-uri https://logs.templarbit.com/csp/foobar/reports;",
+			in: "  default-src  'self'  ;  script-src 'self'; connect-src ; object-src 'self';base-uri 'none';report-uri https://logs.templarbit.com/csp/foobar/reports;  ",
 			expectDirectives: []Directive{
 				{
 					Name:  "default-src",

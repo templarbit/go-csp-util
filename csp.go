@@ -118,7 +118,11 @@ func ParseDirectives(serializedPolicy string) (Directives, error) {
 		// The value is a set of non-empty strings. The value set MAY be empty.
 		values := make([]string, 0)
 		if len(x) > 1 {
-			values = strings.Split(x[1], " ")
+			for _, v := range strings.Split(x[1], " ") {
+				if len(v) > 0 {
+					values = append(values, v)
+				}
+			}
 		}
 
 		// Add directive to directive set.
