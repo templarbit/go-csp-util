@@ -27,7 +27,7 @@ var (
 	ErrDirectiveNameUnknown = fmt.Errorf("unknown directive name")
 )
 
-func Parse(serializedPolicy string) (Directives, error) {
+func ParseDirectives(serializedPolicy string) (Directives, error) {
 	d := make(Directives, 0)
 
 	// For each token returned by strictly splitting serialized CSP

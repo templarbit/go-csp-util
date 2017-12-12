@@ -59,7 +59,7 @@ func TestParse(t *testing.T) {
 	}
 
 	for i, tt := range tests {
-		out, err := Parse(tt.in)
+		out, err := ParseDirectives(tt.in)
 		if err != tt.expectErr {
 			if xerr, ok := err.(*ParseError); ok {
 				if xerr.Err != tt.expectErr {
