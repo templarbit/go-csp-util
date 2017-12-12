@@ -26,8 +26,9 @@ type Directive struct {
 }
 
 var (
-	ErrDuplicateDirective   = fmt.Errorf("duplicate directive")
-	ErrDirectiveNameUnknown = fmt.Errorf("unknown directive name")
+	ErrDuplicateDirective      = fmt.Errorf("duplicate directive")
+	ErrDirectiveNameUnknown    = fmt.Errorf("unknown directive name")
+	ErrDirectiveNameDeprecated = fmt.Errorf("deprecated directive name")
 )
 
 func ParseDirectives(serializedPolicy string) (Directives, error) {
@@ -57,6 +58,7 @@ func ParseDirectives(serializedPolicy string) (Directives, error) {
 		name := x[0]
 
 		// Verify name
+		// see also https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 		switch strings.ToLower(name) {
 		case "child-src":
 		case "connect-src":
@@ -78,7 +80,20 @@ func ParseDirectives(serializedPolicy string) (Directives, error) {
 		case "frame-ancestors":
 		case "report-uri":
 		case "report-to":
+		case "upgrade-insecure-requests":
+		case "block-all-mixed-content":
+		case "referrer":
+		case "require-sri-for":
 			// ok
+
+		case "reflected-xss":
+			// ok, deprecated from CSP 2
+
+		case "policy-uri":
+			return nil, &ParseError{
+				Err:    ErrDirectiveNameDeprecated,
+				Custom: "policy-uri has been removed and is not supported",
+			}
 
 		default:
 			return nil, &ParseError{
