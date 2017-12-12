@@ -20,6 +20,11 @@ type Directive struct {
 	Value []string
 }
 
+var (
+	ErrDuplicateDirective   = fmt.Errorf("duplicate directive")
+	ErrDirectiveNameUnknown = fmt.Errorf("unknown directive name")
+)
+
 func Parse(serializedPolicy string) ([]Directive, error) {
 	d := make([]Directive, 0)
 
@@ -104,18 +109,4 @@ func Parse(serializedPolicy string) ([]Directive, error) {
 	}
 
 	return d, nil
-}
-
-var (
-	ErrDuplicateDirective   = fmt.Errorf("duplicate directive")
-	ErrDirectiveNameUnknown = fmt.Errorf("unknown directive name")
-)
-
-type ParseError struct {
-	Err    error
-	Custom string
-}
-
-func (e *ParseError) Error() string {
-	return fmt.Sprintf("%v: %v", e.Err.Error(), e.Custom)
 }
