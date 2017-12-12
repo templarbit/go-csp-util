@@ -12,8 +12,10 @@ const (
 
 type Policy struct {
 	Disposition string
-	Directive   []Directive
+	Directives  Directives
 }
+
+type Directives []Directive
 
 type Directive struct {
 	Name  string
@@ -25,8 +27,8 @@ var (
 	ErrDirectiveNameUnknown = fmt.Errorf("unknown directive name")
 )
 
-func Parse(serializedPolicy string) ([]Directive, error) {
-	d := make([]Directive, 0)
+func Parse(serializedPolicy string) (Directives, error) {
+	d := make(Directives, 0)
 
 	// For each token returned by strictly splitting serialized CSP
 	// on the U+003B SEMICOLON character (;):
