@@ -82,12 +82,14 @@ func ParseDirectives(serializedPolicy string) (Directives, error) {
 		case "report-to":
 		case "upgrade-insecure-requests":
 		case "block-all-mixed-content":
-		case "referrer":
 		case "require-sri-for":
 			// ok
 
 		case "reflected-xss":
 			// ok, deprecated from CSP 2
+
+		case "referrer":
+			// ok, deprecated, use Referrer-Policy header
 
 		case "policy-uri":
 			return nil, &ParseError{
