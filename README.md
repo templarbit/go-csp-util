@@ -1,9 +1,9 @@
-# csp-parse
+# go-csp-util
 
-[![Build Status](https://travis-ci.org/templarbit/csp-parse.svg?branch=master)](https://travis-ci.org/templarbit/csp-parse)
-[![GoDoc](https://godoc.org/github.com/templarbit/csp-parse?status.svg)](https://godoc.org/github.com/templarbit/csp-parse)
+[![Build Status](https://travis-ci.org/templarbit/go-csp-util.svg?branch=master)](https://travis-ci.org/templarbit/go-csp-util)
+[![GoDoc](https://godoc.org/github.com/templarbit/go-csp-util?status.svg)](https://godoc.org/github.com/templarbit/go-csp-util)
 
-Content-Security-Policy parser in compliance with the W3C 
+Content-Security-Policy utils, i.e. CSP parser in compliance with the W3C 
 [CSP Level 2](https://www.w3.org/TR/CSP2/) 
 and [CSP Level 3](https://www.w3.org/TR/CSP3/) specs.
 
@@ -24,11 +24,11 @@ directive-value      = *( %x09 / %x20-%x2B / %x2D-%x3A / %x3C-%7E )
 ## Usage
 
 ```
-go get github.com/templarbit/csp-parse
+go get github.com/templarbit/go-csp-util
 ```
 
 ```go
-import "github.com/templarbit/csp-parse"
+import "github.com/templarbit/go-csp-util"
 
 directives, err := csp.ParseDirectives("default-src 'self'; script-src 'self'; object-src 'self'; base-uri 'none'; report-uri https://logs.templarbit.com/csp/xxkey/reports")
 ```
