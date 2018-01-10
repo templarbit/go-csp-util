@@ -20,6 +20,14 @@ type Policy struct {
 
 type Directives []Directive
 
+func (d Directives) String() string {
+	o := make([]string, 0)
+	for _, v := range d {
+		o = append(o, v.Name+" "+strings.Join(v.Value, " "))
+	}
+	return strings.Join(o, "; ")
+}
+
 type Directive struct {
 	Name  string
 	Value []string

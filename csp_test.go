@@ -95,3 +95,16 @@ func TestParse(t *testing.T) {
 		}
 	}
 }
+
+func TestDirectivesToString(t *testing.T) {
+	e := "default-src 'self'; script-src 'self'; object-src 'self' http://; base-uri 'none'; report-uri https://logs.templarbit.com/csp/xxkey/reports"
+	directives, err := ParseDirectives(e)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	o := directives.String()
+	if o != e {
+		t.Errorf("\nexpected: %v\n     got: %v", e, o)
+	}
+}
