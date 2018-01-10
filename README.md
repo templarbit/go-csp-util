@@ -33,6 +33,10 @@ import "github.com/templarbit/go-csp-util"
 directives, err := csp.ParseDirectives("default-src 'self'; script-src 'self'; object-src 'self'; base-uri 'none'; report-uri https://logs.templarbit.com/csp/xxkey/reports")
 ```
 
+## Other languages
+
+  * [Ruby](https://github.com/templarbit/ruby-csp-util)
+  * [Javascript](https://github.com/templarbit/javascript-csp-util)
 
 ## Docs
 
