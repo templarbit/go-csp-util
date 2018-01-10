@@ -23,7 +23,7 @@ type Directives []Directive
 func (d Directives) String() string {
 	o := make([]string, 0)
 	for _, v := range d {
-		o = append(o, v.Name+" "+strings.Join(v.Value, " "))
+		o = append(o, v.String())
 	}
 	return strings.Join(o, "; ")
 }
@@ -31,6 +31,10 @@ func (d Directives) String() string {
 type Directive struct {
 	Name  string
 	Value []string
+}
+
+func (d Directive) String() string {
+	return d.Name + " " + strings.Join(d.Value, " ")
 }
 
 var (
