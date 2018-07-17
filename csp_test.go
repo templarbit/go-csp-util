@@ -108,3 +108,33 @@ func TestDirectivesToString(t *testing.T) {
 		t.Errorf("\nexpected: %v\n     got: %v", e, o)
 	}
 }
+
+func TestAddDirective(t *testing.T) {
+	d := make(Directives, 0)
+	d.AddDirective(Directive{"foo", []string{"b", "a", "r"}})
+	d.AddDirective(Directive{"oof", []string{"r", "a", "b"}})
+
+	result := d.String()
+	expect := "foo b a r; oof r a b"
+	if result != expect {
+		t.Errorf("expected %v, got %v", expect, result)
+	}
+}
+
+func TestRemoveDirective(t *testing.T) {
+	e := "default-src 'self'; script-src 'self'; object-src 'self' http://; base-uri 'none'; report-uri https://logs.templarbit.com/csp/xxkey/reports"
+	directives, err := ParseDirectives(e)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	directives.RemoveDirectiveByName("script-src")
+	directives.RemoveDirectiveByName("report-uri")
+	directives.RemoveDirectiveByName("object-src")
+
+	result := directives.String()
+	expect := "default-src 'self'; base-uri 'none'"
+	if result != expect {
+		t.Errorf("expected %v, got %v", expect, result)
+	}
+}

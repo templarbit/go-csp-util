@@ -148,3 +148,19 @@ func ParseDirectives(serializedPolicy string) (Directives, error) {
 
 	return d, nil
 }
+
+func (d *Directives) AddDirective(v Directive) error {
+	// TODO add missing name validation
+	*d = append(*d, v)
+	return nil
+}
+
+func (d *Directives) RemoveDirectiveByName(name string) {
+	x := make(Directives, 0)
+	for _, v := range *d {
+		if v.Name != name {
+			x = append(x, v)
+		}
+	}
+	*d = x
+}
