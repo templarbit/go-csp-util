@@ -150,8 +150,21 @@ func ParseDirectives(serializedPolicy string) (Directives, error) {
 }
 
 func (d *Directives) AddDirective(v Directive) error {
-	// TODO add missing name validation
-	*d = append(*d, v)
+	// add values to existing directive if already exists
+	added := false
+	for i := 0; i < len(*d); i++ {
+		if (*d)[i].Name == v.Name {
+			(*d)[i].Value = append((*d)[i].Value, v.Value...)
+			added = true
+			break
+		}
+	}
+
+	// ... or add new directive
+	if !added {
+		*d = append(*d, v)
+	}
+
 	return nil
 }
 
