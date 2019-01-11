@@ -71,6 +71,7 @@ func ParseDirectives(serializedPolicy string) (Directives, error) {
 
 		// Verify name
 		// see also https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+		// see also https://www.w3.org/TR/CSP3/#csp-directives
 		switch strings.ToLower(name) {
 		case "child-src":
 		case "connect-src":
@@ -80,6 +81,7 @@ func ParseDirectives(serializedPolicy string) (Directives, error) {
 		case "img-src":
 		case "manifest-src":
 		case "media-src":
+		case "prefetch-src":
 		case "object-src":
 		case "script-src":
 		case "style-src":
