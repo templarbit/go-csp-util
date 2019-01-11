@@ -87,6 +87,8 @@ func ParseDirectives(serializedPolicy string) (Directives, error) {
 		case "script-src-elem":
 		case "script-src-attr":
 		case "style-src":
+		case "style-src-elem":
+		case "style-src-attr":
 		case "worker-src":
 		case "base-uri":
 		case "plugin-types":
