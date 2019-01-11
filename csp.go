@@ -96,6 +96,7 @@ func ParseDirectives(serializedPolicy string) (Directives, error) {
 		case "disown-opener":
 		case "form-action":
 		case "frame-ancestors":
+		case "navigate-to":
 		case "report-uri":
 		case "report-to":
 		case "upgrade-insecure-requests":
