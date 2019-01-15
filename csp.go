@@ -2,6 +2,7 @@ package csp
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 )
 
@@ -161,14 +162,30 @@ func (d *Directives) AddDirective(v Directive) error {
 	added := false
 	for i := 0; i < len(*d); i++ {
 		if (*d)[i].Name == v.Name {
-			(*d)[i].Value = append((*d)[i].Value, v.Value...)
 			added = true
-			break
+			var valmap = map[string]struct{}{}
+
+			for _, val := range v.Value {
+				valmap[val] = struct{}{}
+			}
+
+			for _, val := range (*d)[i].Value {
+				valmap[val] = struct{}{}
+			}
+
+			var sorted sort.StringSlice
+			for val := range valmap {
+				sorted = append(sorted, val)
+			}
+			sorted.Sort()
+			(*d)[i].Value = sorted
 		}
 	}
 
 	// ... or add new directive
 	if !added {
+		var sorted = sort.StringSlice(v.Value)
+		sorted.Sort()
 		*d = append(*d, v)
 	}
 
