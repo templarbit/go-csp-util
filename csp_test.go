@@ -113,10 +113,10 @@ func TestAddDirective(t *testing.T) {
 	d := make(Directives, 0)
 	d.AddDirective(Directive{"foo", []string{"b", "a", "r"}})
 	d.AddDirective(Directive{"oof", []string{"r", "a", "b"}})
-	d.AddDirective(Directive{"foo", []string{"1", "2"}})
+	d.AddDirective(Directive{"foo", []string{"1", "2", "a"}})
 
 	result := d.String()
-	expect := "foo b a r 1 2; oof r a b"
+	expect := "foo 1 2 a b r; oof a b r"
 	if result != expect {
 		t.Errorf("expected %v, got %v", expect, result)
 	}
