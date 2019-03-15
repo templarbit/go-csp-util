@@ -23,20 +23,11 @@ directive-value      = *( %x09 / %x20-%x2B / %x2D-%x3A / %x3C-%7E )
 
 ## Usage
 
-```
-go get github.com/templarbit/go-csp-util
-```
-
 ```go
 import "github.com/templarbit/go-csp-util"
 
-directives, err := csp.ParseDirectives("default-src 'self'; script-src 'self'; object-src 'self'; base-uri 'none'; report-uri https://logs.templarbit.com/csp/xxkey/reports")
+directives, err := csp.ParseDirectives("default-src 'self'; script-src 'self'; object-src 'self'; base-uri 'none'; report-uri https://ingest.templarbit.com/csp-reports")
 ```
-
-## Other languages
-
-  * [Ruby](https://github.com/templarbit/ruby-csp-util)
-  * [Javascript](https://github.com/templarbit/javascript-csp-util)
 
 ## Docs
 
