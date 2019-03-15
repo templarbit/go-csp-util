@@ -38,10 +38,30 @@ func (d Directive) String() string {
 	return d.Name + " " + strings.Join(d.Value, " ")
 }
 
+func (d Directive) Valid() error {
+	if err := IsValidDirectiveName(d.Name); err != nil {
+		return err
+	}
+
+	for _, v := range d.Value {
+		if strings.Contains(v, ",") {
+			return ErrCommaInDirectiveValue
+		}
+
+		if !validValueChars(v) {
+			return ErrInvalidValueChars
+		}
+	}
+
+	return nil
+}
+
 var (
 	ErrDuplicateDirective      = fmt.Errorf("duplicate directive")
 	ErrDirectiveNameUnknown    = fmt.Errorf("unknown directive name")
 	ErrDirectiveNameDeprecated = fmt.Errorf("deprecated directive name")
+	ErrCommaInDirectiveValue   = fmt.Errorf("directive value contains comma")
+	ErrInvalidValueChars       = fmt.Errorf("invalid characters in value")
 )
 
 func ParseDirectives(serializedPolicy string) (Directives, error) {
@@ -70,58 +90,9 @@ func ParseDirectives(serializedPolicy string) (Directives, error) {
 		}
 		name := x[0]
 
-		// Verify name
-		// see also https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
-		// see also https://www.w3.org/TR/CSP3/#csp-directives
-		switch strings.ToLower(name) {
-		case "child-src":
-		case "connect-src":
-		case "default-src":
-		case "font-src":
-		case "frame-src":
-		case "img-src":
-		case "manifest-src":
-		case "media-src":
-		case "prefetch-src":
-		case "object-src":
-		case "script-src":
-		case "script-src-elem":
-		case "script-src-attr":
-		case "style-src":
-		case "style-src-elem":
-		case "style-src-attr":
-		case "worker-src":
-		case "base-uri":
-		case "plugin-types":
-		case "sandbox":
-		case "disown-opener":
-		case "form-action":
-		case "frame-ancestors":
-		case "navigate-to":
-		case "report-uri":
-		case "report-to":
-		case "upgrade-insecure-requests":
-		case "block-all-mixed-content":
-		case "require-sri-for":
-			// ok
-
-		case "reflected-xss":
-			// ok, deprecated from CSP 2
-
-		case "referrer":
-			// ok, deprecated, use Referrer-Policy header
-
-		case "policy-uri":
-			return nil, &ParseError{
-				Err:    ErrDirectiveNameDeprecated,
-				Custom: "policy-uri has been removed and is not supported",
-			}
-
-		default:
-			return nil, &ParseError{
-				Err:    ErrDirectiveNameUnknown,
-				Custom: fmt.Sprintf("directive name '%v' is unknown", name),
-			}
+		// Check directive name
+		if err := IsValidDirectiveName(name); err != nil {
+			return nil, err
 		}
 
 		// If the set of directives already contains a directive
@@ -142,6 +113,14 @@ func ParseDirectives(serializedPolicy string) (Directives, error) {
 		if len(x) > 1 {
 			for _, v := range strings.Split(x[1], " ") {
 				if len(v) > 0 {
+					if strings.Contains(v, ",") {
+						return nil, ErrCommaInDirectiveValue
+					}
+
+					if !validValueChars(v) {
+						return nil, ErrInvalidValueChars
+					}
+
 					values = append(values, v)
 				}
 			}
@@ -158,6 +137,10 @@ func ParseDirectives(serializedPolicy string) (Directives, error) {
 }
 
 func (d *Directives) AddDirective(v Directive) error {
+	if err := v.Valid(); err != nil {
+		return err
+	}
+
 	// add values to existing directive if already exists
 	added := false
 	for i := 0; i < len(*d); i++ {
@@ -200,4 +183,91 @@ func (d *Directives) RemoveDirectiveByName(name string) {
 		}
 	}
 	*d = x
+}
+
+func IsValidDirectiveName(name string) error {
+	// Verify name
+	// see also https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+	// see also https://www.w3.org/TR/CSP3/#csp-directives
+	switch strings.ToLower(name) {
+	case "child-src":
+	case "connect-src":
+	case "default-src":
+	case "font-src":
+	case "frame-src":
+	case "img-src":
+	case "manifest-src":
+	case "media-src":
+	case "prefetch-src":
+	case "object-src":
+	case "script-src":
+	case "script-src-elem":
+	case "script-src-attr":
+	case "style-src":
+	case "style-src-elem":
+	case "style-src-attr":
+	case "worker-src":
+	case "base-uri":
+	case "plugin-types":
+	case "sandbox":
+	case "disown-opener":
+	case "form-action":
+	case "frame-ancestors":
+	case "navigate-to":
+	case "report-uri":
+	case "report-to":
+	case "upgrade-insecure-requests":
+	case "block-all-mixed-content":
+	case "require-sri-for":
+		// ok
+
+	case "reflected-xss":
+		// ok, deprecated from CSP 2
+
+	case "referrer":
+		// ok, deprecated, use Referrer-Policy header
+
+	case "policy-uri":
+		return &ParseError{
+			Err:    ErrDirectiveNameDeprecated,
+			Custom: "policy-uri has been removed and is not supported",
+		}
+
+	default:
+		return &ParseError{
+			Err:    ErrDirectiveNameUnknown,
+			Custom: fmt.Sprintf("directive name '%v' is unknown", name),
+		}
+	}
+
+	return nil
+}
+
+func validValueChars(str string) bool {
+	for _, r := range str {
+		if validValueChar(r) == -1 {
+			return false
+		}
+	}
+	return true
+}
+
+func validValueChar(r rune) rune {
+	if r == 0x09 {
+		return r
+	}
+
+	if r >= 0x20 && r <= 0x2b {
+		return r
+	}
+
+	if r >= 0x2d && r <= 0x3a {
+		return r
+	}
+
+	if r >= 0x3c && r <= 0x7e {
+		return r
+	}
+
+	return -1
 }

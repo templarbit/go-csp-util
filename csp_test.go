@@ -12,7 +12,7 @@ func TestParse(t *testing.T) {
 	}{
 		// test some basic stuff
 		{
-			in: "  default-src  'self'  ;  script-src 'self'; connect-src ; object-src 'self';base-uri 'none';report-uri https://logs.templarbit.com/csp/foobar/reports;  ",
+			in: "  default-src  'self'  ;  script-src 'self' https://; connect-src ; object-src 'self';base-uri 'none';report-uri https://logs.templarbit.com/csp/foobar/reports?foo=bar;  ",
 			expectDirectives: []Directive{
 				{
 					Name:  "default-src",
@@ -20,7 +20,7 @@ func TestParse(t *testing.T) {
 				},
 				{
 					Name:  "script-src",
-					Value: []string{"'self'"},
+					Value: []string{"'self'", "https://"},
 				},
 				{
 					Name:  "connect-src",
@@ -36,7 +36,7 @@ func TestParse(t *testing.T) {
 				},
 				{
 					Name:  "report-uri",
-					Value: []string{"https://logs.templarbit.com/csp/foobar/reports"},
+					Value: []string{"https://logs.templarbit.com/csp/foobar/reports?foo=bar"},
 				},
 			},
 			expectErr: nil,
@@ -59,6 +59,33 @@ func TestParse(t *testing.T) {
 			in:               "bogus 'self'",
 			expectDirectives: nil,
 			expectErr:        ErrDirectiveNameUnknown,
+		},
+
+		// test comma in directive value
+		{
+			in:               "style-src 'self', 'unsafe-inline'",
+			expectDirectives: nil,
+			expectErr:        ErrCommaInDirectiveValue,
+		},
+		{
+			in:               "style-src 'self' 'unsafe-inline' http://example.com,",
+			expectDirectives: nil,
+			expectErr:        ErrCommaInDirectiveValue,
+		},
+
+		// test ; in diretive value, although this should never happen anyway,
+		// because the whole directive is split by ; at the very beginning
+		{
+			in:               "style-src 'self'; 'unsafe-inline' http://example.com,",
+			expectDirectives: nil,
+			expectErr:        ErrDirectiveNameUnknown, // because it will treat unsafe-inline as directive name
+		},
+
+		// test invalid chars in value
+		{
+			in:               "object-src 'se\x00lf'",
+			expectDirectives: nil,
+			expectErr:        ErrInvalidValueChars,
 		},
 	}
 
@@ -111,12 +138,12 @@ func TestDirectivesToString(t *testing.T) {
 
 func TestAddDirective(t *testing.T) {
 	d := make(Directives, 0)
-	d.AddDirective(Directive{"foo", []string{"b", "a", "r"}})
-	d.AddDirective(Directive{"oof", []string{"r", "a", "b"}})
-	d.AddDirective(Directive{"foo", []string{"1", "2", "a"}})
+	d.AddDirective(Directive{"script-src", []string{"b", "a", "r"}})
+	d.AddDirective(Directive{"style-src", []string{"r", "a", "b"}})
+	d.AddDirective(Directive{"script-src", []string{"1", "2", "a"}})
 
 	result := d.String()
-	expect := "foo 1 2 a b r; oof a b r"
+	expect := "script-src 1 2 a b r; style-src a b r"
 	if result != expect {
 		t.Errorf("expected %v, got %v", expect, result)
 	}
